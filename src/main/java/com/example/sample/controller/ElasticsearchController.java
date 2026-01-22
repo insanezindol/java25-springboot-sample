@@ -3,13 +3,15 @@ package com.example.sample.controller;
 import com.example.sample.domain.ProductDoc;
 import com.example.sample.service.ElasticsearchService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
-@RequestMapping("/api/elasticsearch")
+@RequestMapping("/api/v1/elasticsearch")
 @RequiredArgsConstructor
 public class ElasticsearchController {
 

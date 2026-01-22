@@ -12,7 +12,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/mysql")
+@RequestMapping("/api/v1/mysql")
 @RequiredArgsConstructor
 public class UserController {
 

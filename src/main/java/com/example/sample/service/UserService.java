@@ -4,14 +4,15 @@ import com.example.sample.domain.User;
 import com.example.sample.dto.UserRequestDto;
 import com.example.sample.repository.MysqlUserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class UserService {
 
     private final MysqlUserRepository mysqlUserRepository;
@@ -21,10 +22,12 @@ public class UserService {
         return mysqlUserRepository.save(dto.toEntity()).getId();
     }
 
+    @Transactional(readOnly = true)
     public List<User> findAll() {
         return mysqlUserRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
     public User findOne(Long id) {
         return mysqlUserRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다. id=" + id));

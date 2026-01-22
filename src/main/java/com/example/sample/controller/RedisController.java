@@ -13,7 +13,7 @@ import java.util.Set;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/redis")
+@RequestMapping("/api/v1/redis")
 @RequiredArgsConstructor
 public class RedisController {
 
