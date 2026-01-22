@@ -207,7 +207,7 @@ public class RedisUserRepository {
      * User 저장
      */
     public void saveUser(RedisUserDto user) {
-        String key = "user:" + user.getId();
+        String key = "user:" + user.id();
         setValue(key, user);
         // 1시간 TTL 설정
         setExpire(key, 1, TimeUnit.HOURS);

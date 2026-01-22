@@ -22,9 +22,9 @@ public class RedisController {
     @PostMapping("/users")
     public ResponseEntity<RedisUserDto> createUser(@RequestBody RedisUserDto userDto) {
         RedisUserDto createdUser = redisService.createUser(
-                userDto.getUsername(),
-                userDto.getEmail(),
-                userDto.getAge()
+                userDto.username(),
+                userDto.email(),
+                userDto.age()
         );
         return ResponseEntity.ok(createdUser);
     }
