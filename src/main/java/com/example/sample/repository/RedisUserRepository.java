@@ -204,24 +204,6 @@ public class RedisUserRepository {
     // ========== Custom Operations ==========
 
     /**
-     * User 저장
-     */
-    public void saveUser(RedisUserDto user) {
-        String key = "user:" + user.id();
-        setValue(key, user);
-        // 1시간 TTL 설정
-        setExpire(key, 1, TimeUnit.HOURS);
-    }
-
-    /**
-     * User 조회
-     */
-    public RedisUserDto getUser(String userId) {
-        String key = "user:" + userId;
-        return (RedisUserDto) getValue(key);
-    }
-
-    /**
      * 모든 키 조회 (패턴)
      */
     public Set<String> getKeys(String pattern) {

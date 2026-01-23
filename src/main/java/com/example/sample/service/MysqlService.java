@@ -13,7 +13,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class MysqlService {
 
     private final MysqlUserRepository mysqlUserRepository;
 

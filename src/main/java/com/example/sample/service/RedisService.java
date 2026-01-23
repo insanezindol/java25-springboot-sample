@@ -9,58 +9,41 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class RedisService {
 
+    private final static String _REDIS_USER_PREFIX = "user:";
     private final RedisUserRepository redisUserRepository;
 
     // ========== User 관련 메서드 ==========
-
-    public RedisUserDto createUser(String username, String email, int age) {
-        String userId = "user_" + System.currentTimeMillis();
-
-        RedisUserDto user = RedisUserDto.builder()
-                .id(userId)
-                .username(username)
-                .email(email)
-                .age(age)
+    public RedisUserDto createUser(RedisUserDto user) {
+        RedisUserDto savedUser = RedisUserDto.builder()
+                .id(user.id())
+                .username(user.username())
+                .email(user.email())
+                .age(user.age())
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
 
-        redisUserRepository.saveUser(user);
-        return user;
+        String key = _REDIS_USER_PREFIX + savedUser.id();
+        redisUserRepository.setValueWithTTL(key, savedUser, 1L, TimeUnit.HOURS);
+        return savedUser;
     }
 
-    public RedisUserDto getUserById(String userId) {
-        return redisUserRepository.getUser(userId);
+    public Object getUserById(String userId) {
+        return redisUserRepository.getValue(_REDIS_USER_PREFIX + userId);
     }
 
     public void deleteUser(String userId) {
-        String key = "user:" + userId;
-        redisUserRepository.deleteValue(key);
+        redisUserRepository.deleteValue(_REDIS_USER_PREFIX + userId);
     }
 
     // ========== 공통 메서드 ==========
-
-    public void setCache(String key, Object value, long ttlMinutes) {
-        redisUserRepository.setValueWithTTL(key, value, ttlMinutes, java.util.concurrent.TimeUnit.MINUTES);
-    }
-
-    public Object getCache(String key) {
-        return redisUserRepository.getValue(key);
-    }
-
-    public void deleteCache(String key) {
-        redisUserRepository.deleteValue(key);
-    }
-
-    public boolean exists(String key) {
-        return redisUserRepository.hasKey(key);
-    }
 
     public Set<String> searchKeys(String pattern) {
         return redisUserRepository.getKeys(pattern);

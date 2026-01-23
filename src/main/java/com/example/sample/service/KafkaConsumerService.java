@@ -16,4 +16,5 @@ public class KafkaConsumerService {
             log.error("Error processing message", e);
         }
     }
+
 }
