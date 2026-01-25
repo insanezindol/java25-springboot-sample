@@ -62,13 +62,12 @@ public class MysqlController {
 
     @Operation(summary = "사용자 수정", description = "사용자를 수정합니다.")
     @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody UserRequestDto dto) {
+    public ResponseEntity<User> update(@PathVariable Long id, @RequestBody UserRequestDto dto) {
         // add metric
         List<Tag> tags = List.of(Tag.of("method_name", "update"), Tag.of("id", String.valueOf(id)));
         Metrics.counter(_METRIC_NAME, tags).increment();
 
-        mysqlService.update(id, dto);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(mysqlService.update(id, dto));
     }
 
     @Operation(summary = "사용자 삭제", description = "사용자를 삭제합니다.")
