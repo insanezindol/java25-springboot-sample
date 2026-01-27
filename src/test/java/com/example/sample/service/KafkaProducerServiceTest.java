@@ -38,7 +38,7 @@ class KafkaProducerServiceTest {
     }
 
     @Test
-    @DisplayName("카프카 퍼블리쉬 성공 테스트")
+    @DisplayName("카프카 퍼블리쉬 테스트")
     void sendMessage_Success() {
         // given
         final Long userId = 100L;
