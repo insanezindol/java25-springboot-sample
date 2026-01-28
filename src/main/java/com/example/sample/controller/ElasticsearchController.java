@@ -48,7 +48,7 @@ public class ElasticsearchController {
 
     @Operation(summary = "상품 수정", description = "상품을 수정합니다.")
     @PutMapping("/{id}")
-    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody ProductDoc doc) {
+    public ResponseEntity<String> update(@PathVariable String id, @RequestBody ProductDoc doc) {
         return ResponseEntity.ok(elasticsearchService.updateProduct(id, doc));
     }
 
