@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '4.0.1'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'org.asciidoctor.jvm.convert' version '4.0.5'
+    id 'jacoco'
 }
 
 group = 'com.example'
@@ -54,9 +55,97 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
+// ========== Jacoco 설정 시작 ==========
+jacoco {
+    toolVersion = "0.8.14"
+}
+
 tasks.named('test') {
     outputs.dir snippetsDir
     useJUnitPlatform()
+    finalizedBy jacocoTestReport // 테스트 후 리포트 자동 생성
+}
+
+// Jacoco 리포트 생성 설정
+jacocoTestReport {
+    dependsOn test
+
+    reports {
+        xml.required = true  // SonarQube 등에서 사용
+        html.required = true // HTML 리포트 생성
+        csv.required = false
+    }
+
+    // 제외할 클래스 설정 (Maven의 excludes와 동일)
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    '**/*Application.class'          // Application 클래스 제외
+            ])
+        }))
+    }
+
+    doLast {
+        println "\n✅ Jacoco 리포트가 생성되었습니다:"
+        println "📊 HTML 리포트: build/reports/jacoco/test/html/index.html"
+    }
+}
+
+// Jacoco 커버리지 검증 설정 (Maven의 check goal과 동일)
+jacocoTestCoverageVerification {
+    dependsOn test
+    mustRunAfter jacocoTestReport
+
+    violationRules {
+        rule {
+            enabled = true
+            element = 'BUNDLE' // 전체 프로젝트
+
+            limit {
+                counter = 'LINE'           // 라인 커버리지
+                value = 'COVEREDRATIO'     // 커버된 비율
+                minimum = 0.30             // 30% 이상
+            }
+
+            // 추가 커버리지 규칙 (선택사항)
+            limit {
+                counter = 'BRANCH'         // 브랜치 커버리지
+                value = 'COVEREDRATIO'
+                minimum = 0.10             // 10% 이상
+            }
+
+            limit {
+                counter = 'METHOD'         // 메소드 커버리지
+                value = 'COVEREDRATIO'
+                minimum = 0.30             // 30% 이상
+            }
+
+            limit {
+                counter = 'CLASS'          // 클래스 커버리지
+                value = 'COVEREDRATIO'
+                minimum = 0.50             // 50% 이상
+            }
+        }
+    }
+
+    // 리포트와 동일한 제외 설정 적용
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    '**/*Application.class'
+            ])
+        }))
+    }
+}
+
+// 빌드 순서 정의
+tasks.named('check') {
+    dependsOn jacocoTestCoverageVerification
+}
+
+// build 태스크에 check 포함
+tasks.named('build') {
+    dependsOn 'check'
 }
 
 tasks.named('asciidoctor') {
