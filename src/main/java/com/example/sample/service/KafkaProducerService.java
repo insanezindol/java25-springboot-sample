@@ -20,7 +20,7 @@ import java.time.Instant;
 public class KafkaProducerService {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
-    private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule()).disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS).configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    private final ObjectMapper objectMapper;
 
     @Value("${kafka.topic.event}")
     private String eventTopic;
@@ -29,8 +29,9 @@ public class KafkaProducerService {
         UserEventMessage message = new UserEventMessage(userId, action, Instant.now());
         String jsonMessage = null;
         try {
-            jsonMessage = mapper.writeValueAsString(message);
+            jsonMessage = objectMapper.writeValueAsString(message);
         } catch (JsonProcessingException e) {
+            log.error(e.getMessage());
             throw new RuntimeException(e);
         }
 

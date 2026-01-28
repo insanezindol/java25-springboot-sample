@@ -4,6 +4,10 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import com.example.sample.log.MemoryAppender;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -21,10 +25,15 @@ class KafkaConsumerServiceTest {
     private static final String LOGGER_NAME = "com.example.sample.service";
     private static MemoryAppender memoryAppender;
     private KafkaConsumerService kafkaConsumerService;
+    private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
-        kafkaConsumerService = new KafkaConsumerService();
+        objectMapper = new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        kafkaConsumerService = new KafkaConsumerService(objectMapper);
         Logger logger = (Logger) LoggerFactory.getLogger(LOGGER_NAME);
         logger.setLevel(Level.DEBUG);
         memoryAppender = new MemoryAppender();
