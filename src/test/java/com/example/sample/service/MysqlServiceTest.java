@@ -1,5 +1,7 @@
 package com.example.sample.service;
 
+import com.example.sample.common.CustomException;
+import com.example.sample.common.ResponseCode;
 import com.example.sample.domain.User;
 import com.example.sample.dto.UserRequestDto;
 import com.example.sample.repository.MysqlUserRepository;
@@ -19,6 +21,8 @@ import java.util.Optional;
 import static com.navercorp.fixturemonkey.api.experimental.JavaGetterMethodPropertySelector.javaGetter;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
@@ -110,6 +114,20 @@ class MysqlServiceTest {
     }
 
     @Test
+    @DisplayName("사용자 검색 : 존재하지 않는 사용자 검색 시 예외 발생")
+    void findOneNotFoundException() {
+        // given
+        Long invalidId = 999L;
+        when(mysqlUserRepository.findById(invalidId)).thenReturn(Optional.empty());
+
+        // when & then
+        CustomException exception = assertThrows(CustomException.class, () -> mysqlService.findOne(invalidId));
+
+        assertEquals("해당 사용자가 없습니다. id=999", exception.getErrorResponse().message());
+        verify(mysqlUserRepository, times(1)).findById(invalidId);
+    }
+
+    @Test
     @DisplayName("사용자 수정")
     void update() {
         // given
@@ -134,6 +152,21 @@ class MysqlServiceTest {
     }
 
     @Test
+    @DisplayName("사용자 수정 : 존재하지 않는 사용자 검색 시 예외 발생")
+    void updateNotFoundException() {
+        // given
+        Long invalidId = 999L;
+        UserRequestDto userRequestDto = fixtureMonkey.giveMeOne(UserRequestDto.class);
+        when(mysqlUserRepository.findById(invalidId)).thenReturn(Optional.empty());
+
+        // when & then
+        CustomException exception = assertThrows(CustomException.class, () -> mysqlService.update(invalidId, userRequestDto));
+
+        assertEquals("해당 사용자가 없습니다. id=999", exception.getErrorResponse().message());
+        verify(mysqlUserRepository, times(1)).findById(invalidId);
+    }
+
+    @Test
     @DisplayName("사용자 삭제")
     void delete() {
         // given
@@ -146,6 +179,20 @@ class MysqlServiceTest {
         // then
         verify(mysqlUserRepository, times(1)).findById(any());
         verify(mysqlUserRepository, times(1)).deleteById(any());
+    }
+
+    @Test
+    @DisplayName("사용자 삭제 : 존재하지 않는 사용자 검색 시 예외 발생")
+    void deleteNotFoundException() {
+        // given
+        Long invalidId = 999L;
+        when(mysqlUserRepository.findById(invalidId)).thenReturn(Optional.empty());
+
+        // when & then
+        CustomException exception = assertThrows(CustomException.class, () -> mysqlService.delete(invalidId));
+
+        assertEquals("해당 사용자가 없습니다. id=999", exception.getErrorResponse().message());
+        verify(mysqlUserRepository, times(1)).findById(invalidId);
     }
 
 }

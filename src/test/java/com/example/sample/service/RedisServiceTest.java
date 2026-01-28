@@ -126,6 +126,24 @@ class RedisServiceTest {
         // given
         final String userId = "abc1";
         final String itemId = "100";
+        final List<Object> objects = List.of("user:abc1", "user:abc2", "user:abc3");
+
+        // when
+        when(redisUserRepository.leftPush(any(), any())).thenReturn(1L);
+        when(redisUserRepository.getListRange(any(), anyLong(), anyLong())).thenReturn(objects);
+        redisService.addToRecentItems(userId, itemId);
+
+        // then
+        verify(redisUserRepository, times(1)).leftPush(any(), any());
+        verify(redisUserRepository, times(1)).getListRange(any(), anyLong(), anyLong());
+    }
+
+    @Test
+    @DisplayName("최근상품 추가")
+    void addToRecentItemsUpTenElement() {
+        // given
+        final String userId = "abc1";
+        final String itemId = "100";
         final List<Object> objects = List.of("user:abc1", "user:abc2", "user:abc3", "user:abc4", "user:abc5",
                 "user:abc6", "user:abc7", "user:abc8", "user:abc9", "user:abc10", "user:abc11");
 
@@ -230,6 +248,23 @@ class RedisServiceTest {
 
         // when
         when(redisUserRepository.getValue(any())).thenReturn(viewCount);
+        Long resultViewCount = redisService.getViewCount(itemId);
+
+        // then
+        Assertions.assertNotNull(resultViewCount);
+        Assertions.assertEquals(viewCount, resultViewCount);
+        verify(redisUserRepository, times(1)).getValue(any());
+    }
+
+    @Test
+    @DisplayName("조회수 가져오기 (NULL 리턴 케이스)")
+    void getViewCountReturnNull() {
+        // given
+        final String itemId = "abc1";
+        final Long viewCount = 0L;
+
+        // when
+        when(redisUserRepository.getValue(any())).thenReturn(null);
         Long resultViewCount = redisService.getViewCount(itemId);
 
         // then
