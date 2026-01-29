@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @Tag(name = "사용자 관리 API(redis)", description = "사용자 관리 redis CRUD")
@@ -111,17 +110,6 @@ public class RedisController {
         String searchPattern = pattern != null ? pattern : "*";
         Set<String> keys = redisService.searchKeys(searchPattern);
         return ResponseEntity.ok(keys);
-    }
-
-    @Operation(summary = "redis 상태 조회", description = "redis 상태를 조회합니다.")
-    @GetMapping("/info")
-    public ResponseEntity<Map<String, Object>> getRedisInfo() {
-        Map<String, Object> info = Map.of(
-                "service", "Redis CRUD Sample API",
-                "status", "running",
-                "timestamp", java.time.LocalDateTime.now()
-        );
-        return ResponseEntity.ok(info);
     }
 
 }

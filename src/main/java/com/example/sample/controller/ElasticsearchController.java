@@ -30,31 +30,31 @@ public class ElasticsearchController {
 
     @Operation(summary = "상품 상세 조회", description = "상품 상세를 조회합니다.")
     @GetMapping("/{id}")
-    public ResponseEntity<ProductDoc> detail(@PathVariable String id) {
+    public ResponseEntity<ProductDoc> findByProductId(@PathVariable String id) {
         return ResponseEntity.ok(elasticsearchService.findById(id));
     }
 
     @Operation(summary = "상품 이름 조회", description = "상품 이름으로 조회합니다.")
     @GetMapping("/search")
-    public ResponseEntity<List<ProductDoc>> search(@RequestParam String name) {
+    public ResponseEntity<List<ProductDoc>> searchProduct(@RequestParam String name) {
         return ResponseEntity.ok(elasticsearchService.searchByName(name));
     }
 
     @Operation(summary = "상품 생성", description = "상품을 생성합니다.")
     @PostMapping
-    public ResponseEntity<String> create(@RequestBody ProductDoc doc) {
+    public ResponseEntity<String> createProduct(@RequestBody ProductDoc doc) {
         return ResponseEntity.ok(elasticsearchService.saveProduct(doc));
     }
 
     @Operation(summary = "상품 수정", description = "상품을 수정합니다.")
     @PutMapping("/{id}")
-    public ResponseEntity<String> update(@PathVariable String id, @RequestBody ProductDoc doc) {
+    public ResponseEntity<String> updateProduct(@PathVariable String id, @RequestBody ProductDoc doc) {
         return ResponseEntity.ok(elasticsearchService.updateProduct(id, doc));
     }
 
     @Operation(summary = "상품 삭제", description = "상품을 삭제합니다.")
     @DeleteMapping("/{id}")
-    public ResponseEntity<ProductDoc> delete(@PathVariable String id) {
+    public ResponseEntity<ProductDoc> deleteProduct(@PathVariable String id) {
         elasticsearchService.delete(id);
         return ResponseEntity.noContent().build();
     }

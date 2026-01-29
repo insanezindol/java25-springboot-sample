@@ -32,7 +32,7 @@ public class MysqlController {
 
     @Operation(summary = "사용자 목록 조회", description = "사용자 목록을 조회합니다.")
     @GetMapping
-    public ResponseEntity<List<User>> list() {
+    public ResponseEntity<List<User>> findAllUser() {
         // add metric
         List<Tag> tags = List.of(Tag.of("method_name", "list"));
         Metrics.counter(_METRIC_NAME, tags).increment();
@@ -42,7 +42,7 @@ public class MysqlController {
 
     @Operation(summary = "사용자 상세 조회", description = "사용자 상세를 조회합니다.")
     @GetMapping("/{id}")
-    public ResponseEntity<User> detail(@PathVariable Long id) {
+    public ResponseEntity<User> findByUserId(@PathVariable Long id) {
         // add metric
         List<Tag> tags = List.of(Tag.of("method_name", "detail"), Tag.of("id", String.valueOf(id)));
         Metrics.counter(_METRIC_NAME, tags).increment();
@@ -52,7 +52,7 @@ public class MysqlController {
 
     @Operation(summary = "사용자 생성", description = "사용자를 생성합니다.")
     @PostMapping
-    public ResponseEntity<Long> create(@RequestBody UserRequestDto dto) {
+    public ResponseEntity<Long> createUser(@RequestBody UserRequestDto dto) {
         // add metric
         List<Tag> tags = List.of(Tag.of("method_name", "create"));
         Metrics.counter(_METRIC_NAME, tags).increment();
@@ -62,7 +62,7 @@ public class MysqlController {
 
     @Operation(summary = "사용자 수정", description = "사용자를 수정합니다.")
     @PutMapping("/{id}")
-    public ResponseEntity<User> update(@PathVariable Long id, @RequestBody UserRequestDto dto) {
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody UserRequestDto dto) {
         // add metric
         List<Tag> tags = List.of(Tag.of("method_name", "update"), Tag.of("id", String.valueOf(id)));
         Metrics.counter(_METRIC_NAME, tags).increment();
@@ -72,7 +72,7 @@ public class MysqlController {
 
     @Operation(summary = "사용자 삭제", description = "사용자를 삭제합니다.")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         // add metric
         List<Tag> tags = List.of(Tag.of("method_name", "delete"), Tag.of("id", String.valueOf(id)));
         Metrics.counter(_METRIC_NAME, tags).increment();
