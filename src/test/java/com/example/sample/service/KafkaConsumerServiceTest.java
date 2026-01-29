@@ -29,11 +29,11 @@ class KafkaConsumerServiceTest {
 
     @BeforeEach
     void setUp() {
-        objectMapper = new ObjectMapper()
+        this.objectMapper = new ObjectMapper()
                 .registerModule(new JavaTimeModule())
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        kafkaConsumerService = new KafkaConsumerService(objectMapper);
+        this.kafkaConsumerService = new KafkaConsumerService(objectMapper);
         Logger logger = (Logger) LoggerFactory.getLogger(LOGGER_NAME);
         logger.setLevel(Level.DEBUG);
         memoryAppender = new MemoryAppender();
