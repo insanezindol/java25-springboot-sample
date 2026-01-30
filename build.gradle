@@ -39,8 +39,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
-    implementation("com.navercorp.fixturemonkey:fixture-monkey:1.1.15")
-    implementation("com.google.code.gson:gson:2.13.2")
+    implementation 'com.navercorp.fixturemonkey:fixture-monkey:1.1.15'
+    implementation 'com.google.code.gson:gson:2.13.2'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
@@ -51,6 +51,11 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-kafka-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
     testImplementation 'org.projectlombok:lombok'
+    testImplementation 'org.testcontainers:testcontainers:1.21.4'
+    testImplementation 'org.testcontainers:junit-jupiter:1.21.4'
+    testImplementation 'org.testcontainers:mysql:1.21.4'
+    testImplementation 'org.testcontainers:kafka:1.21.4'
+    testImplementation 'org.testcontainers:elasticsearch:1.21.4'
     testAnnotationProcessor 'org.projectlombok:lombok'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
@@ -80,7 +85,10 @@ jacocoTestReport {
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it, exclude: [
-                    '**/*Application.class'          // Application 클래스 제외
+                    '**/*Application.class',
+                    '**/config/**',
+                    '**/common/**',
+                    '**/repository/**'
             ])
         }))
     }
@@ -104,26 +112,26 @@ jacocoTestCoverageVerification {
             limit {
                 counter = 'LINE'           // 라인 커버리지
                 value = 'COVEREDRATIO'     // 커버된 비율
-                minimum = 0.30             // 30% 이상
+                minimum = 0.80
             }
 
             // 추가 커버리지 규칙 (선택사항)
             limit {
                 counter = 'BRANCH'         // 브랜치 커버리지
                 value = 'COVEREDRATIO'
-                minimum = 0.10             // 10% 이상
+                minimum = 0.90
             }
 
             limit {
                 counter = 'METHOD'         // 메소드 커버리지
                 value = 'COVEREDRATIO'
-                minimum = 0.30             // 30% 이상
+                minimum = 0.90
             }
 
             limit {
                 counter = 'CLASS'          // 클래스 커버리지
                 value = 'COVEREDRATIO'
-                minimum = 0.50             // 50% 이상
+                minimum = 0.90
             }
         }
     }
@@ -132,7 +140,10 @@ jacocoTestCoverageVerification {
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it, exclude: [
-                    '**/*Application.class'
+                    '**/*Application.class',
+                    '**/config/**',
+                    '**/common/**',
+                    '**/repository/**'
             ])
         }))
     }

@@ -1,0 +1,60 @@
+spring:
+  application:
+    name: java25-springboot-test
+
+  # 가상 스레드 설정
+  threads:
+    virtual:
+      enabled: true
+
+  # MySQL 데이터소스
+  datasource:
+    url: jdbc:mysql://localhost:3306/appdb?serverTimezone=Asia/Seoul&useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
+    username: appuser
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    generate-ddl: false
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  # Redis (Spring Data Redis)
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+      timeout: 2000ms
+      connect-timeout: 1000ms
+      client-type: lettuce
+
+  # Elasticsearch (Spring Boot 2.3+ / 3.x 설정)
+  elasticsearch:
+    uris: http://localhost:9200
+    connection-timeout: 10s
+    socket-timeout: 30s
+
+  # Kafka (producer + consumer)
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: app-test-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      enable-auto-commit: true
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+kafka:
+  topic:
+    event: user-events
+
+server:
+  port: 8080
+  shutdown: graceful
