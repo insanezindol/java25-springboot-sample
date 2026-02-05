@@ -1,6 +1,7 @@
 package com.example.sample.repository;
 
-import com.example.sample.dto.RedisUserDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -17,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 public class RedisUserRepository {
 
     private final RedisTemplate<String, Object> redisTemplate;
+    private final ObjectMapper objectMapper;
 
     /**
      * 단일 값 저장
@@ -30,8 +32,13 @@ public class RedisUserRepository {
      * 단일 값 저장 with TTL
      */
     public void setValueWithTTL(String key, Object value, long ttl, TimeUnit timeUnit) {
-        redisTemplate.opsForValue().set(key, value, ttl, timeUnit);
-        log.info("Set key: {} with TTL: {} {}", key, ttl, timeUnit);
+        try {
+            String json = objectMapper.writeValueAsString(value);
+            redisTemplate.opsForValue().set(key, json, ttl, timeUnit);
+            log.info("Set key: {} with TTL: {} {}", key, ttl, timeUnit);
+        } catch (JsonProcessingException e) {
+            log.error("Error serializing value to JSON");
+        }
     }
 
     /**
